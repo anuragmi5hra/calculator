@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* Math Theme Background */
+  background: url("https://www.transparenttextures.com/patterns/dark-math.png"), 
+              linear-gradient(135deg, #0a0a0f, #1e1e2f, #2b2b44);
+  background-size: auto, cover;
+  color: #fff;
+}
+
+
+    /* Add some spacing so footer/nav don’t overlap */
+    main {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 120px; /* avoid navbar overlap */
+      margin-bottom: 60px; /* avoid footer overlap */
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #2c2c2c;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ffffff24;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e67e22;
+    }
+
+    /* ---------------- NAVBAR ---------------- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      padding: 12px 50px;
+      z-index: 1000;
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #ff9500;
+    }
+
+    /* ---------------- DROPDOWNS ---------------- */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.95);
+      color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+      z-index: 2000;
+    }
+
+    .dropdown h3 {
+      margin-bottom: 8px;
+      color: #ff9500;
+    }
+
+    .dropdown p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #ddd;
+    }
+
+    .dropdown ul {
+      padding-left: 0px;
+      text-align: left;
+    }
+
+    .dropdown a {
+      color: #ff9500;
+      text-decoration: none;
+    }
+
+    .dropdown a:hover {
+      text-decoration: underline;
+    }
+
+    .show {
+      display: block;
+      animation: fadeIn 0.0s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------------- CALCULATOR ---------------- */
+    .calculator {
+      background: linear-gradient(to bottom, #1e1e1e, #2c2c2c);
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+      width: 320px;
+    }
+
+    .display {
+      width: 100%;
+      height: 70px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      text-align: right;
+      font-size: 2.2rem;
+      padding: 0 15px;
+      margin-bottom: 25px;
+      box-shadow: inset 0 5px 10px rgba(255,255,255,0.1);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 22px;
+      font-size: 1.6rem;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #333, #222);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 5px 5px 10px #111, -5px -5px 10px #444;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(145deg, #444, #333);
+      transform: translateY(-2px);
+    }
+
+    .operator {
+      background: linear-gradient(145deg, #ff9500, #e67e22);
+      color: #fff;
+    }
+
+    .operator:hover {
+      background: linear-gradient(145deg, #ffa733, #f39c12);
+    }
+
+    .equal {
+      grid-column: span 4;
+      background: linear-gradient(145deg, #28a745, #218838);
+    }
+
+    .equal:hover {
+      background: linear-gradient(145deg, #38d465, #28a745);
+    }
+
+    /* ---------------- FOOTER ---------------- */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      color: #ccc;
+      text-align: center;
+      padding: 12px;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #ff9500;
+      text-decoration: none;
+      margin-left: 5px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">Calculator</div>
+    <ul>
+      <li>
+        <a href="#" onclick="toggleDropdown(event, 'homeDropdown')">Home</a>
+        <div class="dropdown" id="homeDropdown">
+          <h3>Welcome</h3>
+          <p>Stay productive and organized with this dynamic Calculator WebApp.</p>
+        </div>
+      </li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event, 'featuresDropdown')">Features</a>
+        <div class="dropdown" id="featuresDropdown">
+          <h3>Features</h3>
+          <ul>
+            <li>Basic Arithmetic</li>
+            <li>Keyboard Support</li>
+            <li>Clean UI</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event, 'aboutDropdown')">About</a>
+        <div class="dropdown" id="aboutDropdown">
+          <h3>About</h3>
+          <p>This calculator app is styled with gradients and supports all devices.</p>
+        </div>
+      </li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event, 'contactDropdown')">Contact</a>
+        <div class="dropdown" id="contactDropdown">
+          <h3>Contact</h3>
+          <p>Email: <a href="mailto:Anuragmishra20006@gmail.com">Anuragmishra20006@gmail.com</a></p>
+          <p>Facebook: <a href="https://www.facebook.com/profile.php?id=100053037971383" target="_blank" title="Facebook">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" 
+       alt="Facebook" 
+       style="width:30px; height:20px; filter: invert(20%) sepia(80%) saturate(400%) hue-rotate(190deg) brightness(95%) contrast(90%);">
+</a>
+
+</p>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Calculator inside main -->
+  <main>
+    <div class="calculator">
+      <input type="text" class="display" id="display" disabled placeholder="0" title="Calculator display">
+      <div class="buttons">
+        <button class="btn" data-value="7">7</button>
+        <button class="btn" data-value="8">8</button>
+        <button class="btn" data-value="9">9</button>
+        <button class="btn operator" data-value="/">÷</button>
+
+        <button class="btn" data-value="4">4</button>
+        <button class="btn" data-value="5">5</button>
+        <button class="btn" data-value="6">6</button>
+        <button class="btn operator" data-value="*">×</button>
+
+        <button class="btn" data-value="1">1</button>
+        <button class="btn" data-value="2">2</button>
+        <button class="btn" data-value="3">3</button>
+        <button class="btn operator" data-value="-">−</button>
+
+        <button class="btn" data-value="0">0</button>
+        <button class="btn" data-value=".">.</button>
+        <button class="btn" id="clear">C</button>
+        <button class="btn operator" data-value="+">+</button>
+
+        <button class="btn equal" id="equals">=</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 Calculator | Built with ❤️ by 
+    <a href="#">Anurag</a>
+    <p><a href="https://www.linkedin.com/in/anurag-mishra-20006/" target="_blank" title="LinkedIn">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg" 
+       alt="LinkedIn" 
+       style="width:28px; height:20px; filter: invert(48%) sepia(98%) saturate(2409%) hue-rotate(176deg) brightness(95%) contrast(92%);">
+       <a href="https://www.instagram.com/__.anuragmishra/" target="_blank" title="Instagram">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" 
+       alt="Instagram" 
+       style="width:28px; height:20px; filter: invert(36%) sepia(75%) saturate(4000%) hue-rotate(314deg) brightness(95%) contrast(101%);">
+</a>
+<a href="https://x.com/AnuragMish10174" target="_blank" title="Twitter">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" 
+       alt="Twitter (X)" 
+       style="width:28px; height:20px; filter: invert(100%);">
+</a>
+</p>
+
+  </footer>
+
+  <script>
+    // Dropdown toggle
+    function toggleDropdown(event, id) {
+      event.preventDefault();
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach(d => {
+        if (d.id !== id) d.classList.remove('show');
+      });
+      document.getElementById(id).classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('nav')) {
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+      }
+    });
+
+    // Calculator JS
+    const display = document.getElementById('display');
+    const buttons = document.querySelectorAll('.btn');
+    const clearBtn = document.getElementById('clear');
+    const equalsBtn = document.getElementById('equals');
+
+    let currentInput = '';
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const value = button.getAttribute('data-value');
+        if (value) {
+          currentInput += value;
+          display.value = currentInput;
+        }
+      });
+    });
+
+    clearBtn.addEventListener('click', () => {
+      currentInput = '';
+      display.value = '';
+    });
+
+    equalsBtn.addEventListener('click', () => {
+      calculateResult();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.key >= '0' && e.key <= '9') || e.key === '.' || ['+', '-', '*', '/'].includes(e.key)) {
+        currentInput += e.key;
+        display.value = currentInput;
+      } else if (e.key === 'Enter') {
+        calculateResult();
+      } else if (e.key === 'Backspace') {
+        currentInput = currentInput.slice(0, -1);
+        display.value = currentInput;
+      } else if (e.key.toLowerCase() === 'c') {
+        currentInput = '';
+        display.value = '';
+      }
+    });
+
+    function calculateResult() {
+      try {
+        currentInput = eval(currentInput).toString();
+        display.value = currentInput;
+      } catch {
+        display.value = 'Error';
+        currentInput = '';
+      }
+    }
+  </script>
+</body>
+</html>
